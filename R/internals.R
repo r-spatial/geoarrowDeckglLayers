@@ -18,9 +18,9 @@ writeGeoarrow = function(
   )
 
   data_stream = nanoarrow::as_nanoarrow_array_stream(
-    dat
+    data
     , geometry_schema = geoarrow::infer_geoarrow_schema(
-      dat
+      data
       , coord_type = ifelse(interleaved, "INTERLEAVED", "SEPARATE")
     )
   )

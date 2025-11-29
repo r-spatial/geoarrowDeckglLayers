@@ -90,7 +90,11 @@ addGeoArrowPolygonLayer_default = function(
     )
   }
 
-  path_layer = writeGeoarrow(data, layerId, geom_column_name)
+  path_layer = writeGeoarrow(
+    data
+    , layerId = layerId
+    , geom_column_name = geom_column_name
+  )
 
   map$dependencies = c(
     map$dependencies
