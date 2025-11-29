@@ -47,7 +47,10 @@ m = maplibre(
   ) |>
   add_layers_control(
     collapsible = TRUE
-    , layers = c("aoi")
+    , layers = c(
+      "aoi"
+      , "parcels"
+    )
   ) |>
   fit_bounds(
     unname(st_bbox(aoi))
@@ -65,6 +68,18 @@ m |>
     , data_accessors = geoarrowDeckgl:::dataAccessors(
       getFillColor = c(153, 142, 195, 128)
       , getLineColor = c(153, 142, 195, 128)
+    )
+    , popup = TRUE
+  ) |>
+  geoarrowDeckgl:::addGeoArrowPolygonLayer(
+    data = parcels
+    , layerId = "parcels"
+    , geom_column_name = attr(parcels, "sf_column")
+    , render_options = geoarrowDeckgl:::renderOptions(
+      extruded = FALSE
+    )
+    , data_accessors = geoarrowDeckgl:::dataAccessors(
+      getFillColor = c(241, 163, 64, 192)
       , getLineWidth = 1
     )
     , popup = TRUE
