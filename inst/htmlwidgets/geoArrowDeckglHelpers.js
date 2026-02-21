@@ -100,7 +100,7 @@ function clickFun (info, event, opts, type, map_class) {
   if (opts[typeOptions].length !== 0) {
   //debugger;
     removePopups(opts[typeOptions].className);
-
+//debugger;
     let popup = new window[map_class].Popup(
       opts[typeOptions]
     )
@@ -116,8 +116,20 @@ function clickFun (info, event, opts, type, map_class) {
 
     if (type === "tooltip") {
       popup._content.style.setProperty("pointer-events", "none");
-    };
-//debugger;
+    }
+
+    /*
+    let globeEnabled = document.getElementsByClassName("maplibregl-ctrl-globe-enabled");
+    if (globeEnabled.length === 1) {
+      Object.assign(opts.parameters, {cullMode: 'back'});
+      console.log(info);
+    }
+    if (globeEnabled.length === 0) {
+      Object.assign(opts.parameters, {cullMode: 'none'});
+      console.log(info);
+    }
+    */
+
     return popup;
   }
 }

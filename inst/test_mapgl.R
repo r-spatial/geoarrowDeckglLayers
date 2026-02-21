@@ -1,5 +1,5 @@
 library(mapgl)
-library(geoarrowDeckgl)
+library(geoarrowDeckglLayers)
 library(geoarrow)
 library(sf)
 library(colourvalues)
@@ -60,12 +60,15 @@ m |>
     )
     , parameters = list(
       depthCompare = "always"
+      # , antialias = TRUE
       , cullMode = "back"
     )
     , popup = TRUE
     , popup_options = geoarrowDeckgl:::popupOptions(anchor = "bottom-right")
     , tooltip = TRUE
-    , tooltip_options = geoarrowDeckgl:::tooltipOptions(anchor = "top-left")
+    , tooltip_options = geoarrowDeckgl:::tooltipOptions(
+      anchor = "top-left"
+    )
   ) |>
   add_layers_control(collapsible = TRUE, layers = c("test"))
 

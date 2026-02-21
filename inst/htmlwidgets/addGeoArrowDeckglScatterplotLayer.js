@@ -75,6 +75,7 @@ scatterplotLayer = function(map, opts, arrow_table) {
         if (popup !== undefined) {
           popup.addTo(map);
         }
+        //console.log(map.getProjection());
         // unfortunately the following does not switch between globe and mercator
         // mode for the tooltips. It doesn't expand the pickable area to the
         // mercator area.
