@@ -22,6 +22,8 @@ scatterplotLayer = function(map, opts, arrow_table) {
 
   let layer = new gaDeckLayers.GeoArrowScatterplotLayer({
     id: opts.layerId,
+    // FIXME: have a look at https://github.com/geoarrow/deck.gl-layers/blob/main/examples/point/app.tsx#L53-L71
+    // for potential update to new batch based rendering in deck.gl-layers
     data: arrow_table.batches[0],
     getPosition: arrow_table.batches[0].getChild(opts.geom_column_name),
 
