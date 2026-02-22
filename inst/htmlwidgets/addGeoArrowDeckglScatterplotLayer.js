@@ -1,6 +1,6 @@
 addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 
-  let data_fl = document.getElementById(opts.layerId + '-1-attachment');
+  let data_fl = document.getElementById(opts.layerId + '-geoarrowWidget-attachment');
 
   fetch(data_fl.href)
     .then(result => Arrow.tableFromIPC(result))
@@ -22,8 +22,8 @@ scatterplotLayer = function(map, opts, arrow_table) {
 
   let layer = new gaDeckLayers.GeoArrowScatterplotLayer({
     id: opts.layerId,
-    data: arrow_table,
-    getPosition: arrow_table.getChild(opts.geom_column_name),
+    data: arrow_table.batches[0],
+    getPosition: arrow_table.batches[0].getChild(opts.geom_column_name),
 
     // render options
     radiusUnits: opts.renderOptions.radiusUnits,

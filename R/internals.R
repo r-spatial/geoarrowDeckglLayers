@@ -2,7 +2,6 @@ writeGeoarrow = function(
     data
     , path = tempfile()
     , layerId
-    , suffix = "layer"
     , geom_column_name
     , interleaved = TRUE
 ) {
@@ -11,9 +10,8 @@ writeGeoarrow = function(
   path = file.path(
     path
     , sprintf(
-    "%s_%s.arrow"
+    "%s.arrow"
     , layerId
-    , suffix
     )
   )
 

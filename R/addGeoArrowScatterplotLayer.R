@@ -89,7 +89,7 @@ addGeoArrowScatterplotLayer = function(
 }
 
 
-addGeoArrowScatterplotLayer_default = function(
+.addGeoArrowScatterplotLayer = function(
     map
     , data
     , layerId
@@ -143,7 +143,6 @@ addGeoArrowScatterplotLayer_default = function(
     data = data
     , path = tempfile()
     , layerId = layerId
-    , suffix = "layer"
     , geom_column_name
     , interleaved = TRUE
   )
@@ -152,27 +151,28 @@ addGeoArrowScatterplotLayer_default = function(
     map$dependencies
     , list(
       htmltools::htmlDependency(
-        name = "globeControl"
-        , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
-        , script = "globeControl.js"
-      )
-    )
-    , list(
-      htmltools::htmlDependency(
         name = "deckglScatterplot"
         , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
         , script = "addGeoArrowDeckglScatterplotLayer.js"
       )
     )
-    , arrowDependencies()
-    , geoarrowjsDependencies()
+  #   , arrowDependencies()
+  #   , geoarrowjsDependencies()
     , if (!inherits(map, "mapdeck")) deckglDependencies()
     , geoarrowDeckglLayersDependencies()
-    , deckglMapboxDependency()
-    , deckglDataAttachmentSrc(path_layer, layerId)
+  #   , deckglMapboxDependency()
+  #   , deckglDataAttachmentSrc(path_layer, layerId)
     , helpersDependency()
+  )
+
+  map = geoarrowWidget::attachData(
+    widget = map
+    , file = path_layer
+  )
+
+  map = geoarrowWidget::attachGeoarrowDependencies(
+    widget = map
   )
 
   map = htmlwidgets::onRender(
@@ -203,7 +203,7 @@ addGeoArrowScatterplotLayer.maplibregl = function(
     , ...
     , map_class = "maplibregl"
 ) {
-  addGeoArrowScatterplotLayer_default(
+  .addGeoArrowScatterplotLayer(
     map
     , data
     , ...
@@ -218,7 +218,7 @@ addGeoArrowScatterplotLayer.mapboxgl = function(
     , ...
     , map_class = "mapboxgl"
   ) {
-  addGeoArrowScatterplotLayer_default(
+  .addGeoArrowScatterplotLayer(
     map
     , data
     , ...

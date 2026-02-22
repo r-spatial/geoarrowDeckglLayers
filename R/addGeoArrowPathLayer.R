@@ -55,6 +55,7 @@ addGeoArrowPathLayer_default = function(
     , tooltip_options = tooltipOptions()
     , map_class = "maplibregl"
     , js_code
+    , ...
 ) {
 
   if (isTRUE(popup)) {
@@ -78,7 +79,11 @@ addGeoArrowPathLayer_default = function(
     )
   }
 
-  path_layer = writeGeoarrow(data, layerId, geom_column_name)
+  path_layer = writeGeoarrow(
+    data = data
+    , layerId = layerId
+    , geom_column_name = geom_column_name
+  )
 
   map$dependencies = c(
     map$dependencies
@@ -86,7 +91,7 @@ addGeoArrowPathLayer_default = function(
       htmltools::htmlDependency(
         name = "globeControl"
         , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
         , script = "globeControl.js"
       )
     )
@@ -94,7 +99,7 @@ addGeoArrowPathLayer_default = function(
       htmltools::htmlDependency(
         name = "deckglPathLayer"
         , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
         , script = "addGeoArrowDeckglPathLayer.js"
       )
     )
@@ -120,6 +125,7 @@ addGeoArrowPathLayer_default = function(
       , popupOptions = popup_options
       , tooltipOptions = tooltip_options
       , map_class = map_class
+      , ...
     )
   )
 

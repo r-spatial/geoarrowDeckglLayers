@@ -55,6 +55,13 @@ pathLayer = function(map, opts, arrow_table) {
     // interactivity
     pickable: true,
 
+    // GPU parameters (from luma.gl)
+    // see https://luma.gl/docs/api-reference/core/parameters for valid params
+    // this is currently mainly used to set 'depthCompare: "always"' to avoid
+    // z-fighting rendering issues. Passed via ... from R currently.
+    // (see https://github.com/developmentseed/lonboard/issues/1037)
+    parameters: opts.parameters,
+
     onClick: (info, event) => {
         let popup = clickFun(info, event, opts, "popup", opts.map_class);
         if (popup !== undefined) {
