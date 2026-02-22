@@ -98,7 +98,7 @@ addGeoArrowPolygonLayer_default = function(
       htmltools::htmlDependency(
         name = "globeControl"
         , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
         , script = "globeControl.js"
       )
     )
@@ -106,7 +106,7 @@ addGeoArrowPolygonLayer_default = function(
       htmltools::htmlDependency(
         name = "deckglPolygons"
         , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
         , script = "addGeoArrowDeckglPolygonLayer.js"
       )
     )

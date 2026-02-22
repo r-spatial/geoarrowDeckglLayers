@@ -1,6 +1,6 @@
 ## deck.gl js ==================================================================
 deckglDependencies = function() {
-  fldr = system.file("htmlwidgets/lib/deckgl", package = "geoarrowDeckgl")
+  fldr = system.file("htmlwidgets/lib/deckgl", package = "geoarrowDeckglLayers")
   list(
     htmltools::htmlDependency(
       "deck.gl"
@@ -30,7 +30,7 @@ deckglDataAttachmentSrc = function(fn, layerId) {
 
 ## arrow js ====================================================================
 arrowDependencies = function() {
-  fldr = system.file("htmlwidgets/lib/apache-arrow", package = "geoarrowDeckgl")
+  fldr = system.file("htmlwidgets/lib/apache-arrow", package = "geoarrowDeckglLayers")
   list(
     htmltools::htmlDependency(
       "apache-arrow"
@@ -46,7 +46,7 @@ arrowDependencies = function() {
 
 ## geoarrow deck.gl-layers js ==================================================
 geoarrowDeckglLayersDependencies = function() {
-  fldr = system.file("htmlwidgets/lib/deckgl-layers", package = "geoarrowDeckgl")
+  fldr = system.file("htmlwidgets/lib/deckgl-layers", package = "geoarrowDeckglLayers")
   list(
     htmltools::htmlDependency(
       "geoarrow-deckgl-layers"
@@ -62,7 +62,7 @@ geoarrowDeckglLayersDependencies = function() {
 
 ## geoarrow js =================================================================
 geoarrowjsDependencies = function() {
-  fldr = system.file("htmlwidgets/lib/geoarrow-js", package = "geoarrowDeckgl")
+  fldr = system.file("htmlwidgets/lib/geoarrow-js", package = "geoarrowDeckglLayers")
   list(
     htmltools::htmlDependency(
       "geoarrow-js"
@@ -82,7 +82,7 @@ helpersDependency = function() {
     htmltools::htmlDependency(
       "geoarrowDeckglHelpers"
       , '0.0.1'
-      , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
+      , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
       , script = "geoArrowDeckglHelpers.js"
     )
   )
@@ -91,7 +91,7 @@ helpersDependency = function() {
 
 ## deck.gl js mapbox ===========================================================
 deckglMapboxDependency = function() {
-  fldr = system.file("htmlwidgets/lib/deckgl-mapbox", package = "geoarrowDeckgl")
+  fldr = system.file("htmlwidgets/lib/deckgl-mapbox", package = "geoarrowDeckglLayers")
   list(
     htmltools::htmlDependency(
       "deck.gl-mapbox-overlay"

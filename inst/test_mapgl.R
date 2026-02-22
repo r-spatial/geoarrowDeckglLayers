@@ -47,12 +47,12 @@ m = maplibre(
 #   add_layers_control(collapsible = TRUE, layers = c("test"))
 
 m |>
-  geoarrowDeckgl:::addGeoArrowScatterplotLayer(
+  addGeoArrowScatterplotLayer(
     data = dat
     , layerId = "test"
     , geom_column_name = attr(dat, "sf_column")
-    , render_options = geoarrowDeckgl:::renderOptions()
-    , data_accessors = geoarrowDeckgl:::dataAccessors(
+    , render_options = renderOptions()
+    , data_accessors = dataAccessors(
       getRadius = "radius"
       , getFillColor = "fillColor"
       , getLineWidth = "lineWidth"
@@ -64,9 +64,9 @@ m |>
       , cullMode = "back"
     )
     , popup = TRUE
-    , popup_options = geoarrowDeckgl:::popupOptions(anchor = "bottom-right")
+    , popup_options = popupOptions(anchor = "bottom-right")
     , tooltip = TRUE
-    , tooltip_options = geoarrowDeckgl:::tooltipOptions(
+    , tooltip_options = tooltipOptions(
       anchor = "top-left"
     )
   ) |>
@@ -147,7 +147,7 @@ m = maplibre(style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.j
 #   add_layers_control(collapsible = TRUE, layers = c("test"))
 
 m |>
-  geoarrowDeckgl:::addGeoArrowPathLayer(
+  addGeoArrowPathLayer(
     data = dat
     , layerId = "test"
     , geom_column_name = attr(dat, "sf_column")
@@ -162,6 +162,13 @@ m |>
     )
     , popup = TRUE
     , tooltip = TRUE
+    , parameters = list(
+      ## FIXME: neither depthTest:false nor depthCompare:"always" work in globe
+      depthTest = FALSE
+      , depthCompare = "never"
+      # , antialias = TRUE
+      , cullMode = "back"
+    )
   )
 
 

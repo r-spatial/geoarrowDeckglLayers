@@ -25,7 +25,7 @@ add_globe_control <- function(map, position = "top-right") {
       htmltools::htmlDependency(
         name = "globeControl"
         , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
         , script = "globeControl.js"
       )
     )

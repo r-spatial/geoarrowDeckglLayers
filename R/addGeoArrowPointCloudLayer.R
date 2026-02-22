@@ -146,7 +146,7 @@ addGeoArrowPointCloudLayer_default = function(
       htmltools::htmlDependency(
         name = "globeControl"
         , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
         , script = "globeControl.js"
       )
     )
@@ -154,7 +154,7 @@ addGeoArrowPointCloudLayer_default = function(
       htmltools::htmlDependency(
         name = "deckglPointCloud"
         , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckgl")
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
         , script = "addGeoArrowDeckglPointCloudLayer.js"
       )
     )
