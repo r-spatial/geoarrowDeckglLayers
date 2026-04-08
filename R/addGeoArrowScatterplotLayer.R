@@ -147,6 +147,10 @@ addGeoArrowScatterplotLayer = function(
     , interleaved = TRUE
   )
 
+  map = geoarrowWidget::attachGeoarrowDependencies(
+    widget = map
+  )
+
   map$dependencies = c(
     map$dependencies
     , list(
@@ -169,10 +173,6 @@ addGeoArrowScatterplotLayer = function(
   map = geoarrowWidget::attachData(
     widget = map
     , file = path_layer
-  )
-
-  map = geoarrowWidget::attachGeoarrowDependencies(
-    widget = map
   )
 
   map = htmlwidgets::onRender(
