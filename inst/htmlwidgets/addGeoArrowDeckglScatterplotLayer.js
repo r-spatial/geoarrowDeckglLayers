@@ -11,15 +11,17 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 
       //scatterlayers.push(scatterplotLayer(map, opts, arrow_table));
 
+      let scatterlayer = scatterplotLayer(map, opts, arrow_table);
+/*
       for (var i = 0; i < arrow_table.batches.length; i++) {
         scatterlayers.push(
           scatterplotLayer(map, opts, arrow_table.batches[i])
         );
       }
-
+*/
       let decklayer = new deck.MapboxOverlay({
         interleaved: true,
-        layers: scatterlayers,
+        layers: scatterlayer,
       });
 
       map.addControl(decklayer);
@@ -29,18 +31,15 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 };
 
 
-scatterplotLayer = function(map, opts, batch) {
+scatterplotLayer = function(map, opts, table) {
   let gaDeckLayers = window["@geoarrow/deck"]["gl-layers"];
 
   let layer = new gaDeckLayers.GeoArrowScatterplotLayer({
     id: opts.layerId,
     // FIXME: have a look at https://github.com/geoarrow/deck.gl-layers/blob/main/examples/point/app.tsx#L53-L71
     // for potential update to new batch based rendering in deck.gl-layers
-    data: batch,
-    getPosition: batch.getChild(opts.geom_column_name),
-
-
-    /*
+    data: table,
+    getPosition: table.getChild(opts.geom_column_name),
 
     // render options
     radiusUnits: opts.renderOptions.radiusUnits,
@@ -106,8 +105,9 @@ scatterplotLayer = function(map, opts, batch) {
           Object.assign(info.sourceLayer.props.parameters, {cullMode: 'none'});
           console.log(info.sourceLayer.props.parameters);
         }
+        */
     },
-    */
+
   });
 
   return layer;

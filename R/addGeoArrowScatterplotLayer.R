@@ -147,9 +147,6 @@ addGeoArrowScatterplotLayer = function(
     , interleaved = TRUE
   )
 
-  map = geoarrowWidget::attachGeoarrowDependencies(
-    widget = map
-  )
 
   map$dependencies = c(
     map$dependencies
@@ -161,18 +158,31 @@ addGeoArrowScatterplotLayer = function(
         , script = "addGeoArrowDeckglScatterplotLayer.js"
       )
     )
+  )
+
+  map = geoarrowWidget::attachGeoarrowDependencies(
+    widget = map
+  )
+
+  map$dependencies = c(
+    map$dependencies
   #   , arrowDependencies()
   #   , geoarrowjsDependencies()
     , if (!inherits(map, "mapdeck")) deckglDependencies()
     , geoarrowDeckglLayersDependencies()
   #   , deckglMapboxDependency()
   #   , deckglDataAttachmentSrc(path_layer, layerId)
-    , helpersDependency()
+    # , helpersDependency()
   )
 
   map = geoarrowWidget::attachData(
     widget = map
     , file = path_layer
+  )
+
+  map$dependencies = c(
+    map$dependencies
+    , helpersDependency()
   )
 
   map = htmlwidgets::onRender(
