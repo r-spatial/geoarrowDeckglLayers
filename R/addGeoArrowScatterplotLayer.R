@@ -3,7 +3,7 @@
 #'
 #' @param map the [mapgl::maplibre()] or [mapgl::mapboxgl()] map to add the layer to.
 #' @param data a sf `(MULTI)POINT` object.
-#' @param layerId the layer id.
+#' @param layer_id the layer id.
 #' @param geom_column_name the name of the geometry column of the sf object.
 #' It is inferred automatically if only one is present.
 #' @param popup should a popup be contructed? If `TRUE`, will create a popup fromm all
@@ -20,7 +20,22 @@
 #' @param data_accessors a list of [dataAccessors]
 #' @param popup_options a list of [popupOptions]
 #' @param tooltip_options a list of [tooltipOptions]
-#' @param ... currently not used.
+#' @param ... can be used to pass additional props and parameters to the deck.gl
+#' instance. See Details for more info.
+#'
+#' @details
+#' `...` can be used to pass additional props and parameters to the deck.gl instance
+#' for fine-tuning rendering behaviour. For example, we can pass a list called
+#' `parameters` with settings that control the GPU pipeline of the deck.gl instance.
+#' See \url{https://luma.gl/docs/api-reference/core/parameters} for a list of
+#' available prarmeters.
+#'
+#' By default, all deck.gl layers passed to a `maplibre()` map will be drawn on
+#' top of existing ones. It is, however, possible to inject layers into existing
+#' `maplibre` layers by passing `interleaved = TRUE` via `...`. In combination
+#' with a `render_options = renderOptions(beforeId = "<some existing layer-id>")`
+#' this will plot the current layer underneath "<some existing layer-id>".
+#'
 #'
 #' @examples
 #' library(mapgl)
@@ -48,12 +63,12 @@
 #'   style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
 #' ) |>
 #'   add_navigation_control(visualize_pitch = TRUE) |>
-#'   add_layers_control(collapsible = TRUE, layers = c("test"))
+#'   add_globe_control()
 #'
 #' m |>
 #'   addGeoArrowScatterplotLayer(
 #'     data = dat
-#'     , layerId = "test"
+#'     , layer_id = "test"
 #'     , geom_column_name = attr(dat, "sf_column")
 #'     , render_options = renderOptions()
 #'     , data_accessors = dataAccessors(
@@ -62,17 +77,46 @@
 #'       , getLineWidth = "lineWidth"
 #'       , getLineColor = "lineColor"
 #'     )
+#'     , parameters = list(
+#'       depthCompare = "always"
+#'       , cullMode = "back"
+#'     )
 #'     , popup = TRUE
 #'     , popup_options = popupOptions(anchor = "bottom-right")
 #'     , tooltip = TRUE
 #'     , tooltip_options = tooltipOptions(anchor = "top-left")
 #'   )
 #'
+#' ## interleaved example
+#' m |>
+#'   addGeoArrowScatterplotLayer(
+#'     data = dat
+#'     , layer_id = "test"
+#'     , geom_column_name = attr(dat, "sf_column")
+#'     , interleaved = TRUE
+#'     , render_options = renderOptions(beforeId = "boundary_county")
+#'     , data_accessors = dataAccessors(
+#'       getRadius = "radius"
+#'       , getFillColor = "fillColor"
+#'       , getLineWidth = "lineWidth"
+#'       , getLineColor = "lineColor"
+#'     )
+#'     , parameters = list(
+#'       depthCompare = "always"
+#'       , cullMode = "back"
+#'     )
+#'     , popup = TRUE
+#'     , popup_options = popupOptions(anchor = "bottom-right")
+#'     , tooltip = TRUE
+#'     , tooltip_options = tooltipOptions(anchor = "top-left")
+#'   )
+#'
+#'
 #' @export
 addGeoArrowScatterplotLayer = function(
     map
     , data
-    , layerId
+    , layer_id
     , geom_column_name = attr(data, "sf_column")
     , popup = NULL
     , tooltip = NULL
@@ -92,7 +136,7 @@ addGeoArrowScatterplotLayer = function(
 .addGeoArrowScatterplotLayer = function(
     map
     , data
-    , layerId
+    , layer_id
     , geom_column_name = attr(data, "sf_column")
     , popup = NULL
     , tooltip = NULL
@@ -130,23 +174,18 @@ addGeoArrowScatterplotLayer = function(
     tooltip = NULL
   }
 
-  if (missing(js_code)) {
-    js_code = htmlwidgets::JS(
-      "function(el, x, data) {
-        map = this.getMap();
-        addGeoArrowDeckglScatterplotLayer(map, data);
-      }"
-    )
-  }
-
   path_layer = writeGeoarrow(
     data = data
     , path = tempfile()
-    , layerId = layerId
+    , layerId = layer_id
     , geom_column_name
     , interleaved = TRUE
   )
 
+  map$dependencies = c(
+    map$dependencies
+    , if (!inherits(map, "mapdeck")) deckglDependencies()
+  )
 
   map$dependencies = c(
     map$dependencies
@@ -166,13 +205,8 @@ addGeoArrowScatterplotLayer = function(
 
   map$dependencies = c(
     map$dependencies
-  #   , arrowDependencies()
-  #   , geoarrowjsDependencies()
-    , if (!inherits(map, "mapdeck")) deckglDependencies()
     , geoarrowDeckglLayersDependencies()
-  #   , deckglMapboxDependency()
-  #   , deckglDataAttachmentSrc(path_layer, layerId)
-    # , helpersDependency()
+    , helpersDependency()
   )
 
   map = geoarrowWidget::attachData(
@@ -180,26 +214,34 @@ addGeoArrowScatterplotLayer = function(
     , file = path_layer
   )
 
-  map$dependencies = c(
-    map$dependencies
-    , helpersDependency()
+  if (missing(js_code)) {
+    js_code = htmlwidgets::JS(
+      "function(el, x, data) {
+        map = this.getMap();
+        addGeoArrowDeckglScatterplotLayer(map, data);
+      }"
+    )
+  }
+
+  default_lst = list(
+    geom_column_name = geom_column_name
+    , layerId = layer_id
+    , popup = popup
+    , tooltip = tooltip
+    , renderOptions = render_options
+    , dataAccessors = data_accessors
+    , popupOptions = popup_options
+    , tooltipOptions = tooltip_options
+    , map_class = map_class
+    , interleaved = FALSE
   )
+
+  dot_lst = list(...)
 
   map = htmlwidgets::onRender(
     map
     , htmlwidgets::JS(js_code)
-    , data = list(
-      geom_column_name = geom_column_name
-      , layerId = layerId
-      , popup = popup
-      , tooltip = tooltip
-      , renderOptions = render_options
-      , dataAccessors = data_accessors
-      , popupOptions = popup_options
-      , tooltipOptions = tooltip_options
-      , map_class = map_class
-      , ...
-    )
+    , data = utils::modifyList(default_lst, dot_lst)
   )
 
   return(map)
@@ -248,14 +290,14 @@ addGeoArrowScatterplotLayer.mapboxgl = function(
 #'   js_code =
 #'     "function(el, x, data) {
 #'       debugger;
-#'         let data_fl = document.getElementById(data.layerId + '-1-attachment');
+#'         let data_fl = document.getElementById(data.layer_id + '-1-attachment');
 #'
 #'         fetch(data_fl.href)
 #'           .then(result => Arrow.tableFromIPC(result))
 #'           .then(arrow_table => {
 #'             let geoArrowScatterplot = scatterplot(x, data, arrow_table);
 #'
-#'            md_update_layer(el.id, data.layerId, geoArrowScatterplot);
+#'            md_update_layer(el.id, data.layer_id, geoArrowScatterplot);
 #'           });
 #'       }"
 #'

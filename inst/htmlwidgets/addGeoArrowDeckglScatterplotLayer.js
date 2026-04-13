@@ -2,25 +2,14 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 
   let data_fl = document.getElementById(opts.layerId + '-geoarrowWidget-attachment');
 
-  let scatterlayers = [];
-
   fetch(data_fl.href)
     .then(result => Arrow.tableFromIPC(result))
     .then(arrow_table => {
 
-
-      //scatterlayers.push(scatterplotLayer(map, opts, arrow_table));
-
       let scatterlayer = scatterplotLayer(map, opts, arrow_table);
-/*
-      for (var i = 0; i < arrow_table.batches.length; i++) {
-        scatterlayers.push(
-          scatterplotLayer(map, opts, arrow_table.batches[i])
-        );
-      }
-*/
+
       let decklayer = new deck.MapboxOverlay({
-        interleaved: true,
+        interleaved: opts.interleaved,
         layers: scatterlayer,
       });
 
@@ -40,6 +29,7 @@ scatterplotLayer = function(map, opts, table) {
     // for potential update to new batch based rendering in deck.gl-layers
     data: table,
     getPosition: table.getChild(opts.geom_column_name),
+    beforeId: opts.renderOptions.beforeId,
 
     // render options
     radiusUnits: opts.renderOptions.radiusUnits,

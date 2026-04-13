@@ -38,6 +38,7 @@
 #' * capRounded = TRUE (PathLayer)
 #' * jointRounded = FALSE (PathLayer)
 #' * miterLimit = 4 (PathLayer)
+#' * beforeId = NULL (all Layer types)
 #'
 #' @return list with named options, possibly modified via `...` argument.
 #'
@@ -89,6 +90,7 @@ renderOptions = function(...) {
     , capRounded = TRUE
     , jointRounded = FALSE
     , miterLimit = 4
+    , beforeId = NULL
   )
 
   dot_lst = list(...)

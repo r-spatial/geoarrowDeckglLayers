@@ -49,6 +49,7 @@ Currently, the following options are automatically set to he following defaults:
 \item capRounded = TRUE (PathLayer)
 \item jointRounded = FALSE (PathLayer)
 \item miterLimit = 4 (PathLayer)
+\item beforeId = NULL (all Layer types)
 }
 }
 \examples{

@@ -6,7 +6,7 @@ library(colourvalues)
 
 
 ### points =========================
-n = 1e4
+n = 5e3
 dat = data.frame(
   id = 1:n
   , x = runif(n, -180, 180)
@@ -17,14 +17,9 @@ dat = st_as_sf(
   , coords = c("x", "y")
   , crs = 4326
 )
-dat$fillColor = color_values(
-  rnorm(nrow(dat))
-  , alpha = sample.int(255, nrow(dat), replace = TRUE)
-)
-dat$lineColor = color_values(
-  rnorm(nrow(dat))
-  , alpha = sample.int(255, nrow(dat), replace = TRUE)
-  , palette = "inferno"
+dat$fillColor = sample(hcl.colors(n, alpha = sample(seq(0, 1, length.out = n))))
+dat$lineColor = sample(
+  hcl.colors(n, alpha = sample(seq(0, 1, length.out = n)), palette = "inferno")
 )
 dat$radius = sample.int(15, nrow(dat), replace = TRUE)
 dat$lineWidth = sample.int(5, nrow(dat), replace = TRUE)
@@ -35,7 +30,6 @@ m = maplibre(
   style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
   # , renderWorldCopies = FALSE
   ) |>
-  set_projection("globe") |>
   add_navigation_control(visualize_pitch = TRUE) |>
   add_globe_control()
 
@@ -49,9 +43,10 @@ m = maplibre(
 m |>
   addGeoArrowScatterplotLayer(
     data = dat
-    , layerId = "test"
+    , layer_id = "test"
     , geom_column_name = attr(dat, "sf_column")
-    , render_options = renderOptions()
+    # , interleaved = FALSE
+    , render_options = renderOptions(beforeId = NULL) #"boundary_county")
     , data_accessors = dataAccessors(
       getRadius = "radius"
       , getFillColor = "fillColor"
@@ -60,12 +55,13 @@ m |>
     )
     , parameters = list(
       depthCompare = "always"
-      # , antialias = TRUE
       , cullMode = "back"
     )
     , popup = TRUE
-    , popup_options = popupOptions(anchor = "bottom-right")
-    , tooltip = TRUE
+    , popup_options = popupOptions(
+      anchor = "bottom-right"
+    )
+    , tooltip = FALSE
     , tooltip_options = tooltipOptions(
       anchor = "top-left"
     )

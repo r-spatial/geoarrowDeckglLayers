@@ -8,7 +8,7 @@ using blazing fast \code{\link[nanoarrow:read_nanoarrow]{nanoarrow::write_nanoar
 addGeoArrowScatterplotLayer(
   map,
   data,
-  layerId,
+  layer_id,
   geom_column_name = attr(data, "sf_column"),
   popup = NULL,
   tooltip = NULL,
@@ -24,7 +24,7 @@ addGeoArrowScatterplotLayer(
 
 \item{data}{a sf \verb{(MULTI)POINT} object.}
 
-\item{layerId}{the layer id.}
+\item{layer_id}{the layer id.}
 
 \item{geom_column_name}{the name of the geometry column of the sf object.
 It is inferred automatically if only one is present.}
@@ -49,11 +49,25 @@ is supplied, then this will be shown for all features. If \code{NULL} (deafult) 
 
 \item{tooltip_options}{a list of \link{tooltipOptions}}
 
-\item{...}{currently not used.}
+\item{...}{can be used to pass additional props and parameters to the deck.gl
+instance. See Details for more info.}
 }
 \description{
 Add Deck.gl ScatterplotLayer to a \code{\link[mapgl:maplibre]{mapgl::maplibre()}} or \code{\link[mapgl:mapboxgl]{mapgl::mapboxgl()}} map
 using blazing fast \code{\link[nanoarrow:read_nanoarrow]{nanoarrow::write_nanoarrow()}} data transfer.
+}
+\details{
+\code{...} can be used to pass additional props and parameters to the deck.gl instance
+for fine-tuning rendering behaviour. For example, we can pass a list called
+\code{parameters} with settings that control the GPU pipeline of the deck.gl instance.
+See \url{https://luma.gl/docs/api-reference/core/parameters} for a list of
+available prarmeters.
+
+By default, all deck.gl layers passed to a \code{maplibre()} map will be drawn on
+top of existing ones. It is, however, possible to inject layers into existing
+\code{maplibre} layers by passing \code{interleaved = TRUE} via \code{...}. In combination
+with a \code{render_options = renderOptions(beforeId = "<some existing layer-id>")}
+this will plot the current layer underneath "\if{html}{\out{<some existing layer-id>}}".
 }
 \examples{
 library(mapgl)
@@ -81,12 +95,12 @@ m = maplibre(
   style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
 ) |>
   add_navigation_control(visualize_pitch = TRUE) |>
-  add_layers_control(collapsible = TRUE, layers = c("test"))
+  add_globe_control()
 
 m |>
   addGeoArrowScatterplotLayer(
     data = dat
-    , layerId = "test"
+    , layer_id = "test"
     , geom_column_name = attr(dat, "sf_column")
     , render_options = renderOptions()
     , data_accessors = dataAccessors(
@@ -95,10 +109,39 @@ m |>
       , getLineWidth = "lineWidth"
       , getLineColor = "lineColor"
     )
+    , parameters = list(
+      depthCompare = "always"
+      , cullMode = "back"
+    )
     , popup = TRUE
     , popup_options = popupOptions(anchor = "bottom-right")
     , tooltip = TRUE
     , tooltip_options = tooltipOptions(anchor = "top-left")
   )
+
+## interleaved example
+m |>
+  addGeoArrowScatterplotLayer(
+    data = dat
+    , layer_id = "test"
+    , geom_column_name = attr(dat, "sf_column")
+    , interleaved = TRUE
+    , render_options = renderOptions(beforeId = "boundary_county")
+    , data_accessors = dataAccessors(
+      getRadius = "radius"
+      , getFillColor = "fillColor"
+      , getLineWidth = "lineWidth"
+      , getLineColor = "lineColor"
+    )
+    , parameters = list(
+      depthCompare = "always"
+      , cullMode = "back"
+    )
+    , popup = TRUE
+    , popup_options = popupOptions(anchor = "bottom-right")
+    , tooltip = TRUE
+    , tooltip_options = tooltipOptions(anchor = "top-left")
+  )
+
 
 }
