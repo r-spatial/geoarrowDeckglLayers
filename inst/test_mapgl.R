@@ -65,6 +65,7 @@ m |>
     , tooltip_options = tooltipOptions(
       anchor = "top-left"
     )
+    , interleaved = TRUE
   ) |>
   add_layers_control(collapsible = TRUE, layers = c("test"))
 

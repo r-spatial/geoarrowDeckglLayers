@@ -253,13 +253,11 @@ addGeoArrowScatterplotLayer.maplibregl = function(
     map
     , data
     , ...
-    , map_class = "maplibregl"
 ) {
   .addGeoArrowScatterplotLayer(
     map
     , data
     , ...
-    , map_class = "maplibregl"
   )
 }
 
