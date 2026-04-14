@@ -6,7 +6,7 @@ library(colourvalues)
 
 
 ### points =========================
-n = 5e3
+n = 5e6
 dat = data.frame(
   id = 1:n
   , x = runif(n, -180, 180)
@@ -29,9 +29,8 @@ options(viewer = NULL)
 m = maplibre(
   style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
   # , renderWorldCopies = FALSE
-  ) |>
-  add_navigation_control(visualize_pitch = TRUE) |>
-  add_globe_control()
+  )
+  # geoarrowDeckglLayers:::add_globe_control()
 
 # m = mapboxgl(
 #   style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
@@ -46,7 +45,7 @@ m |>
     , layer_id = "test"
     , geom_column_name = attr(dat, "sf_column")
     # , interleaved = FALSE
-    , render_options = renderOptions(beforeId = NULL) #"boundary_county")
+    , render_options = renderOptions()
     , data_accessors = dataAccessors(
       getRadius = "radius"
       , getFillColor = "fillColor"
@@ -67,7 +66,13 @@ m |>
     )
     , interleaved = TRUE
   ) |>
-  add_layers_control(collapsible = TRUE, layers = c("test"))
+  add_layers_control(
+    collapsible = TRUE
+    , layers = list("Deck layer" = "deck-layer-group-last")
+  ) |>
+  # set_projection("mercator") |>
+  add_globe_control() |>
+  add_navigation_control(visualize_pitch = TRUE)
 
 
 
