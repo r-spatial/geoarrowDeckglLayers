@@ -16,7 +16,6 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
       decklayer.setProps({layers: scatterlayer});
 
     });
-  debugger;
 
 };
 

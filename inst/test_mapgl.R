@@ -6,7 +6,7 @@ library(colourvalues)
 
 
 ### points =========================
-n = 5e6
+n = 5e3
 dat = data.frame(
   id = 1:n
   , x = runif(n, -180, 180)
@@ -42,7 +42,7 @@ m = maplibre(
 m |>
   addGeoArrowScatterplotLayer(
     data = dat
-    , layer_id = "test"
+    , layer_id = "deck-layer-group-last"
     , geom_column_name = attr(dat, "sf_column")
     # , interleaved = FALSE
     , render_options = renderOptions()
