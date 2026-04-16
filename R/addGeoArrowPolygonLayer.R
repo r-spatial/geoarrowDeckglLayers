@@ -3,7 +3,7 @@
 #'
 #' @param map the [mapgl::maplibre()] or [mapgl::mapboxgl()] map to add the layer to.
 #' @param data a sf `(MULTI)POLYGON` object.
-#' @param layerId the layer id.
+#' @param layer_id the layer id.
 #' @param geom_column_name the name of the geometry column of the sf object.
 #' It is inferred automatically if only one is present.
 #' @param popup should a popup be contructed? If `TRUE`, will create a popup fromm all
@@ -26,7 +26,7 @@
 addGeoArrowPolygonLayer = function(
     map
     , data
-    , layerId
+    , layer_id
     , geom_column_name = attr(data, "sf_column")
     , popup = NULL
     , tooltip = NULL
@@ -42,10 +42,10 @@ addGeoArrowPolygonLayer = function(
 
 }
 
-addGeoArrowPolygonLayer_default = function(
+.addGeoArrowPolygonLayer = function(
     map
     , data
-    , layerId
+    , layer_id
     , geom_column_name = attr(data, "sf_column")
     , popup = NULL
     , tooltip = NULL
@@ -55,19 +55,8 @@ addGeoArrowPolygonLayer_default = function(
     , tooltip_options = tooltipOptions()
     , map_class = "maplibregl"
     , js_code
+    , ...
 ) {
-
-  # data = try(
-  #   sf::st_as_sf(data)
-  #   , silent = TRUE
-  # )
-  #
-  # if (inherits(data, "try-error")) {
-  #   stop(
-  #     "cannot convert data to sf"
-  #     , call. = FALSE
-  #   )
-  # }
 
   if (isTRUE(popup)) {
     popup = names(data)
@@ -81,6 +70,46 @@ addGeoArrowPolygonLayer_default = function(
     tooltip = NULL
   }
 
+  path_layer = writeGeoarrow(
+    data = data
+    , path = tempfile()
+    , layerId = layer_id
+    , geom_column_name
+    , interleaved = TRUE
+  )
+
+  map$dependencies = c(
+    map$dependencies
+    , if (!inherits(map, "mapdeck")) deckglDependencies()
+  )
+
+  map$dependencies = c(
+    map$dependencies
+    , list(
+      htmltools::htmlDependency(
+        name = "deckglPolygonLayer"
+        , version = "0.0.1"
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
+        , script = "addGeoArrowDeckglPolygonLayer.js"
+      )
+    )
+  )
+
+  map = geoarrowWidget::attachGeoarrowDependencies(
+    widget = map
+  )
+
+  map$dependencies = c(
+    map$dependencies
+    , geoarrowDeckglLayersDependencies()
+    , helpersDependency()
+  )
+
+  map = geoarrowWidget::attachData(
+    widget = map
+    , file = path_layer
+  )
+
   if (missing(js_code)) {
     js_code = htmlwidgets::JS(
       "function(el, x, data) {
@@ -90,55 +119,25 @@ addGeoArrowPolygonLayer_default = function(
     )
   }
 
-  path_layer = writeGeoarrow(data, layerId, geom_column_name)
-
-  map$dependencies = c(
-    map$dependencies
-    , list(
-      htmltools::htmlDependency(
-        name = "globeControl"
-        , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
-        , script = "globeControl.js"
-      )
-    )
-    , list(
-      htmltools::htmlDependency(
-        name = "deckglPolygons"
-        , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
-        , script = "addGeoArrowDeckglPolygonLayer.js"
-      )
-    )
-    , arrowDependencies()
-    , geoarrowjsDependencies()
-    , if (!inherits(map, "mapdeck")) deckglDependencies()
-    , geoarrowDeckglLayersDependencies()
-    , deckglDataAttachmentSrc(path_layer, layerId)
-    # , deckglMapboxDependency()
-    , helpersDependency()
+  default_lst = list(
+    geom_column_name = geom_column_name
+    , layerId = layer_id
+    , popup = popup
+    , tooltip = tooltip
+    , renderOptions = render_options
+    , dataAccessors = data_accessors
+    , popupOptions = popup_options
+    , tooltipOptions = tooltip_options
+    , map_class = map_class
+    , interleaved = FALSE
   )
+
+  dot_lst = list(...)
 
   map = htmlwidgets::onRender(
     map
-    , htmlwidgets::JS(
-      "function(el, x, data) {
-        map = this.getMap();
-        addGeoArrowDeckglPolygonLayer(map, data);
-        addGlobeControl(map);
-      }"
-    )
-    , data = list(
-      geom_column_name = geom_column_name
-      , layerId = layerId
-      , popup = popup
-      , tooltip = tooltip
-      , renderOptions = render_options
-      , dataAccessors = data_accessors
-      , popupOptions = popup_options
-      , tooltipOptions = tooltip_options
-      , map_class = map_class
-    )
+    , htmlwidgets::JS(js_code)
+    , data = utils::modifyList(default_lst, dot_lst)
   )
 
   return(map)
@@ -150,9 +149,8 @@ addGeoArrowPolygonLayer.maplibregl = function(
     map
     , data
     , ...
-    , map_class = "maplibregl"
 ) {
-  addGeoArrowPolygonLayer_default(
+  .addGeoArrowPolygonLayer(
     map
     , data
     , ...
@@ -165,9 +163,8 @@ addGeoArrowPolygonLayer.mapboxgl = function(
     map
     , data
     , ...
-    , map_class = "mapboxgl"
 ) {
-  addGeoArrowPolygonLayer_default(
+  .addGeoArrowPolygonLayer(
     map
     , data
     , ...

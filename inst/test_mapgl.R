@@ -44,7 +44,6 @@ m |>
     data = dat
     , layer_id = "deck-layer-group-last"
     , geom_column_name = attr(dat, "sf_column")
-    # , interleaved = FALSE
     , render_options = renderOptions()
     , data_accessors = dataAccessors(
       getRadius = "radius"
@@ -78,7 +77,10 @@ m |>
 
 
 ### polygons ==================================
-dat = st_read("~/Downloads/data.gpkg")
+# dat = st_read("~/Downloads/data.gpkg")
+dat = mapview::franconia
+idx = sapply(dat, is.factor)
+dat[idx] = NULL
 dat$fillColor = color_values(
   rnorm(nrow(dat))
   , alpha = sample.int(255, nrow(dat), replace = TRUE)
@@ -95,8 +97,6 @@ dat$lineWidth = sample.int(1500, nrow(dat), replace = TRUE)
 options(viewer = NULL)
 
 m = maplibre(style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json') |>
-  add_navigation_control(visualize_pitch = TRUE) |>
-  add_layers_control(collapsible = TRUE, layers = c("test")) |>
   fit_bounds(unname(st_bbox(dat)), animate = FALSE)
 
 # m = mapboxgl(
@@ -107,21 +107,28 @@ m = maplibre(style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.j
 #   add_layers_control(collapsible = TRUE, layers = c("test"))
 
 m |>
-  geoarrowDeckgl:::addGeoArrowPolygonLayer(
+  addGeoArrowPolygonLayer(
     data = dat
-    , layerId = "test"
+    , layer_id = "deck-layer-group-last"
     , geom_column_name = attr(dat, "sf_column")
-    , render_options = geoarrowDeckgl:::renderOptions(
+    , render_options = renderOptions(
       extruded = FALSE
     )
-    , data_accessors = geoarrowDeckgl:::dataAccessors(
+    , data_accessors = dataAccessors(
       getFillColor = "fillColor"
       , getLineColor = "lineColor"
-      , getLineWidth = 1 # "lineWidth"
+      , getLineWidth = 2 #"lineWidth"
       , getElevation = "elevation"
     )
     , popup = TRUE
-  )
+  ) |>
+  add_layers_control(
+    collapsible = TRUE
+    , layers = list("Deck layer" = "deck-layer-group-last")
+  ) |>
+  # set_projection("mercator") |>
+  add_globe_control() |>
+  add_navigation_control(visualize_pitch = TRUE)
 
 
 ### lines ======================================

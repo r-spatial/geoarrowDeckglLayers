@@ -8,7 +8,7 @@ using blazing fast \code{\link[nanoarrow:read_nanoarrow]{nanoarrow::write_nanoar
 addGeoArrowPolygonLayer(
   map,
   data,
-  layerId,
+  layer_id,
   geom_column_name = attr(data, "sf_column"),
   popup = NULL,
   tooltip = NULL,
@@ -24,7 +24,7 @@ addGeoArrowPolygonLayer(
 
 \item{data}{a sf \verb{(MULTI)POLYGON} object.}
 
-\item{layerId}{the layer id.}
+\item{layer_id}{the layer id.}
 
 \item{geom_column_name}{the name of the geometry column of the sf object.
 It is inferred automatically if only one is present.}

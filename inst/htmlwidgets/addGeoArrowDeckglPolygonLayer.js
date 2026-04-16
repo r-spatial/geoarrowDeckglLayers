@@ -1,29 +1,32 @@
 addGeoArrowDeckglPolygonLayer = function(map, opts) {
 
-  let data_fl = document.getElementById(opts.layerId + '-1-attachment');
+  let decklayer = new deck.MapboxOverlay({
+    interleaved: opts.interleaved,
+    layers: [],
+  });
+  map.addControl(decklayer);
+
+  let data_fl = document.getElementById(opts.layerId + '-geoarrowWidget-attachment');
 
   fetch(data_fl.href)
     .then(result => Arrow.tableFromIPC(result))
     .then(arrow_table => {
-      let geoArrowPolygonLayer = polygonLayer(map, opts, arrow_table);
 
-      var decklayer = new deck.MapboxOverlay({
-        interleaved: true,
-        layers: [geoArrowPolygonLayer],
-      });
-      map.addControl(decklayer);
+      let polygonlayer = polygonLayer(map, opts, arrow_table);
+      decklayer.setProps({layers: polygonlayer});
 
     });
+debugger;
 };
 
 polygonLayer = function(map, opts, arrow_table) {
   let gaDeckLayers = window["@geoarrow/deck"]["gl-layers"];
 
-
   let layer = new gaDeckLayers.GeoArrowPolygonLayer({
     id: opts.layerId,
     data: arrow_table,
     getPolygon: arrow_table.getChild(opts.geom_column_name),
+    beforeId: opts.renderOptions.beforeId,
 
     // render options
     filled: opts.renderOptions.filled,
@@ -56,6 +59,13 @@ polygonLayer = function(map, opts, arrow_table) {
 
     // interactivity
     pickable: true,
+
+    // GPU parameters (from luma.gl)
+    // see https://luma.gl/docs/api-reference/core/parameters for valid params
+    // this is currently mainly used to set 'depthCompare: "always"' to avoid
+    // z-fighting rendering issues. Passed via ... from R currently.
+    // (see https://github.com/developmentseed/lonboard/issues/1037)
+    parameters: opts.parameters,
 
     onClick: (info, event) => {
         let popup = clickFun(info, event, opts, "popup", opts.map_class);
