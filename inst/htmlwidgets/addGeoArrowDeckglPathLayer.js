@@ -1,18 +1,22 @@
 addGeoArrowDeckglPathLayer = function(map, opts) {
-  let data_fl = document.getElementById(opts.layerId + '-1-attachment');
+
+  let decklayer = new deck.MapboxOverlay({
+    interleaved: opts.interleaved,
+    layers: [],
+  });
+  map.addControl(decklayer);
+
+  let data_fl = document.getElementById(opts.layerId + '-geoarrowWidget-attachment');
 
   fetch(data_fl.href)
     .then(result => Arrow.tableFromIPC(result))
     .then(arrow_table => {
-      let geoArrowPathLayer = pathLayer(map, opts, arrow_table);
 
-      var decklayer = new deck.MapboxOverlay({
-        interleaved: true,
-        layers: [geoArrowPathLayer],
-      });
-      map.addControl(decklayer);
+      let pathlayer = pathLayer(map, opts, arrow_table);
+      decklayer.setProps({layers: pathlayer});
 
     });
+debugger;
 };
 
 pathLayer = function(map, opts, arrow_table) {

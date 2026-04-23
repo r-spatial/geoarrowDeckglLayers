@@ -3,7 +3,7 @@
 #'
 #' @param map the [mapgl::maplibre()] or [mapgl::mapboxgl()] map to add the layer to.
 #' @param data a sf `(MULTI)LINESTRING` object.
-#' @param layerId the layer id.
+#' @param layer_id the layer id.
 #' @param geom_column_name the name of the geometry column of the sf object.
 #' It is inferred automatically if only one is present.
 #' @param popup should a popup be contructed? If `TRUE`, will create a popup fromm all
@@ -26,7 +26,7 @@
 addGeoArrowPathLayer = function(
     map
     , data
-    , layerId
+    , layer_id
     , geom_column_name = attr(data, "sf_column")
     , popup = NULL
     , tooltip = NULL
@@ -42,10 +42,10 @@ addGeoArrowPathLayer = function(
 
 }
 
-addGeoArrowPathLayer_default = function(
+.addGeoArrowPathLayer = function(
     map
     , data
-    , layerId
+    , layer_id
     , geom_column_name = attr(data, "sf_column")
     , popup = NULL
     , tooltip = NULL
@@ -70,6 +70,46 @@ addGeoArrowPathLayer_default = function(
     tooltip = NULL
   }
 
+  path_layer = writeGeoarrow(
+    data = data
+    , path = tempfile()
+    , layerId = layer_id
+    , geom_column_name
+    , interleaved = TRUE
+  )
+
+  map$dependencies = c(
+    map$dependencies
+    , if (!inherits(map, "mapdeck")) deckglDependencies()
+  )
+
+  map$dependencies = c(
+    map$dependencies
+    , list(
+      htmltools::htmlDependency(
+        name = "deckglPathLayer"
+        , version = "0.0.1"
+        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
+        , script = "addGeoArrowDeckglPathLayer.js"
+      )
+    )
+  )
+
+  map = geoarrowWidget::attachGeoarrowDependencies(
+    widget = map
+  )
+
+  map$dependencies = c(
+    map$dependencies
+    , geoarrowDeckglLayersDependencies()
+    , helpersDependency()
+  )
+
+  map = geoarrowWidget::attachData(
+    widget = map
+    , file = path_layer
+  )
+
   if (missing(js_code)) {
     js_code = htmlwidgets::JS(
       "function(el, x, data) {
@@ -79,54 +119,25 @@ addGeoArrowPathLayer_default = function(
     )
   }
 
-  path_layer = writeGeoarrow(
-    data = data
-    , layerId = layerId
-    , geom_column_name = geom_column_name
+  default_lst = list(
+    geom_column_name = geom_column_name
+    , layerId = layer_id
+    , popup = popup
+    , tooltip = tooltip
+    , renderOptions = render_options
+    , dataAccessors = data_accessors
+    , popupOptions = popup_options
+    , tooltipOptions = tooltip_options
+    , map_class = map_class
+    , interleaved = FALSE
   )
 
-  map$dependencies = c(
-    map$dependencies
-    , list(
-      htmltools::htmlDependency(
-        name = "globeControl"
-        , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
-        , script = "globeControl.js"
-      )
-    )
-    , list(
-      htmltools::htmlDependency(
-        name = "deckglPathLayer"
-        , version = "0.0.1"
-        , src = system.file("htmlwidgets", package = "geoarrowDeckglLayers")
-        , script = "addGeoArrowDeckglPathLayer.js"
-      )
-    )
-    , arrowDependencies()
-    , geoarrowjsDependencies()
-    , if (!inherits(map, "mapdeck")) deckglDependencies()
-    , geoarrowDeckglLayersDependencies()
-    , deckglDataAttachmentSrc(path_layer, layerId)
-    # , deckglMapboxDependency()
-    , helpersDependency()
-  )
+  dot_lst = list(...)
 
   map = htmlwidgets::onRender(
     map
     , htmlwidgets::JS(js_code)
-    , data = list(
-      geom_column_name = geom_column_name
-      , layerId = layerId
-      , popup = popup
-      , tooltip = tooltip
-      , renderOptions = render_options
-      , dataAccessors = data_accessors
-      , popupOptions = popup_options
-      , tooltipOptions = tooltip_options
-      , map_class = map_class
-      , ...
-    )
+    , data = utils::modifyList(default_lst, dot_lst)
   )
 
   return(map)
@@ -138,9 +149,8 @@ addGeoArrowPathLayer.maplibregl = function(
     map
     , data
     , ...
-    , map_class = "maplibregl"
 ) {
-  addGeoArrowPathLayer_default(
+  .addGeoArrowPathLayer(
     map
     , data
     , ...
@@ -153,9 +163,8 @@ addGeoArrowPathLayer.mapboxgl = function(
     map
     , data
     , ...
-    , map_class = "mapboxgl"
 ) {
-  addGeoArrowPathLayer_default(
+  .addGeoArrowPathLayer(
     map
     , data
     , ...
