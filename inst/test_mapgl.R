@@ -143,7 +143,7 @@ dat$lineColor = color_values(
   , alpha = sample.int(255, nrow(dat), replace = TRUE)
   , palette = "inferno"
 )
-dat$lineWidth = sample.int(1500, nrow(dat), replace = TRUE)
+dat$lineWidth = sample.int(150, nrow(dat), replace = TRUE)
 
 
 options(viewer = NULL)
@@ -161,14 +161,14 @@ m = maplibre(style = 'https://tiles.openfreemap.org/styles/liberty') |>
 m |>
   addGeoArrowPathLayer(
     data = dat
-    , layerId = "test"
+    , layer_id = "deck-layer-group-last"
     , geom_column_name = attr(dat, "sf_column")
-    , render_options = geoarrowDeckgl:::renderOptions(
+    , render_options = renderOptions(
       widthUnits = "meters"
-      , widthScale = 100
-      , widthMaxPixels = 200
+      , widthScale = 1
+      , widthMaxPixels = 20
     )
-    , data_accessors = geoarrowDeckgl:::dataAccessors(
+    , data_accessors = dataAccessors(
       getWidth = "lineWidth"
       , getColor = "lineColor"
     )
@@ -177,14 +177,15 @@ m |>
     , parameters = list(
       ## FIXME: neither depthTest:false nor depthCompare:"always" work in globe
       depthTest = FALSE
-      , depthCompare = "never"
+      , depthCompare = "always"
       # , antialias = TRUE
       , cullMode = "back"
     )
   ) |>
   add_navigation_control(visualize_pitch = TRUE) |>
   add_globe_control() |>
-  add_layers_control(collapsible = TRUE, layers = c("test"))
+  add_layers_control(collapsible = TRUE, layers = c("deck-layer-group-last")) |>
+  geoarrowDeckglLayers:::addMouseCoordinates()
 
 
 
