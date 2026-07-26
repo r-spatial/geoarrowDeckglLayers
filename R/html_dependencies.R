@@ -67,6 +67,20 @@ deckglgeoarrowDependencies = function() {
 ## importmap
 importDependencies = function() {
   fldr = system.file("htmlwidgets/lib", package = "deckglgeoarrow")
+  imports = list(
+    imports = list(
+      "@deck.gl/core" = "https://esm.sh/@deck.gl/core",
+      "@deck.gl/mapbox" = "https://esm.sh/@deck.gl/mapbox",
+      "@deck.gl/geo-layers" = "https://esm.sh/@deck.gl/geo-layers",
+      "@deck.gl/layers" = "https://esm.sh/@deck.gl/layers",
+      "@deck.gl/aggregation-layers" = "https://esm.sh/@deck.gl/aggregation-layers",
+      "apache-arrow" = "https://esm.sh/apache-arrow",
+      "threads" = "https://esm.sh/threads",
+      "@geoarrow/geoarrow-js" = "https://esm.sh/@geoarrow/geoarrow-js",
+      "@geoarrow/deck.gl-geoarrow" = "https://esm.sh/*@geoarrow/deck.gl-geoarrow"
+    )
+  )
+
   list(
     htmltools::htmlDependency(
       "importmap"
@@ -75,33 +89,17 @@ importDependencies = function() {
         # href = "https://cdn.jsdelivr.net/npm/@geoarrow/deck.gl-layers@0.3.0/dist"
         fldr
       )
-      , head = '
-<script type="importmap">
-  {
-    "imports": {
-      "@deck.gl/aggregation-layers": "https://esm.sh/@deck.gl/aggregation-layers@9.3.6",
-      "@deck.gl/core": "https://esm.sh/@deck.gl/core@9.3.6",
-      "@deck.gl/mapbox": "https://esm.sh/@deck.gl/mapbox@9.3.6",
-      "@deck.gl/extensions": "https://esm.sh/@deck.gl/extensions@9.3.6",
-      "@deck.gl/geo-layers": "https://esm.sh/@deck.gl/geo-layers@9.3.6",
-      "@deck.gl/layers": "https://esm.sh/@deck.gl/layers@9.3.6",
-      "@luma.gl/constants": "https://esm.sh/@luma.gl/constants@9.3.6",
-      "@luma.gl/core": "https://esm.sh/@luma.gl/core@9.3.6",
-      "@luma.gl/engine": "https://esm.sh/@luma.gl/engine@9.3.6",
-      "@luma.gl/shadertools": "https://esm.sh/@luma.gl/shadertools@9.3.6",
-      "@geoarrow/deck.gl-geoarrow": "https://esm.sh/@geoarrow/deck.gl-geoarrow@0.4.1?external=@deck.gl/aggregation-layers,@deck.gl/core,@deck.gl/mapbox,@deck.gl/extensions,@deck.gl/geo-layers,@deck.gl/layers,@luma.gl/constants,@luma.gl/core,@luma.gl/engine,@luma.gl/shadertools"
-    }
-  }
-</script>
-      '
-      # , script = "dist.umd.min.js"
+      , head = sprintf(
+        '<script type="importmap">%s</script>'
+        , jsonlite::toJSON(imports, auto_unbox = TRUE)
+      )
     )
   )
 }
 
 
 ## deck.gl-geoarrow dependency as module =======================================
-deckglgeoarrowDependency = function() {
+deckglgeoarrowModuleDependency = function() {
   fldr = system.file("htmlwidgets/lib/deckgl-geoarrow", package = "deckglgeoarrow")
   list(
     htmltools::htmlDependency(

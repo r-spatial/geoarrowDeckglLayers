@@ -217,6 +217,17 @@ addGeoArrowPolygonLayer = function(
 
   map$dependencies = c(
     map$dependencies
+    , importDependencies()
+    , deckglgeoarrowModuleDependency()
+    , helpersDependency()
+  )
+
+  map = geoarrowWidget::attachParquetWasmDependencies(
+    widget = map
+  )
+
+  map$dependencies = c(
+    map$dependencies
     , list(
       htmltools::htmlDependency(
         name = "deckglPolygonLayer"
@@ -225,15 +236,6 @@ addGeoArrowPolygonLayer = function(
         , script = "addGeoArrowDeckglPolygonLayer.js"
       )
     )
-  )
-
-  map$dependencies = c(
-    map$dependencies
-    , if (!inherits(map, "mapdeck")) deckglDependencies()
-  )
-
-  map = geoarrowWidget::attachParquetWasmDependencies(
-    widget = map
   )
 
   if (missing(source)) {
@@ -247,12 +249,6 @@ addGeoArrowPolygonLayer = function(
   } else {
     layer_id = source
   }
-
-  map$dependencies = c(
-    map$dependencies
-    , deckglgeoarrowDependencies()
-    , helpersDependency()
-  )
 
   if (missing(js_code)) {
     js_code = htmlwidgets::JS(

@@ -15,7 +15,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
   deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
 
   if (deckoverlay === undefined) {
-    deckoverlay = new mapboxoverlay.MapboxOverlay({
+    deckoverlay = new MapboxOverlay({
       id: "geoarrow-deck-layer",
       interleaved: opts.interleaved,
       layers: [],
@@ -23,7 +23,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
       deviceProps: {
         _cacheShaders: true,
         _cachePipelines: true,
-      }
+      },
     });
     map.addControl(deckoverlay);
   }
@@ -40,18 +40,30 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
       } else if (opts.extension_type === "parquet") {
         return window.parquet2arrow(result);
       } else {
-        console.log("extension type not supported, need 'geoarrow' or 'geoparquet'");
+        console.warn("extension type not supported, need 'geoarrow' or 'geoparquet'");
       }
     })
     .then(arrow_table => {
 
-      let scatterlayer = scatterplotLayer(map, opts, arrow_table);
+      let batchIndex = 0;
+      const scatterlayers = [];
+      let len = arrow_table.batches.length;
+      let batch = {};
+      let id = [];
+
+      for (let i = 0; i < len; i++) {
+
+        batch = arrow_table.batches[i];
+        id = `${opts.decklayerId}-${batchIndex}`;
+        scatterlayers.push(scatterplotLayer(map, opts, batch, id));
+
+      }
 
       // does the mapboxoverlay already have layer(s)?
       if (deckoverlay._props.layers.length ===  0) {
-        deckoverlay.setProps({ layers: [scatterlayer] });
+        deckoverlay.setProps({ layers: scatterlayers });
       } else {
-        let lrs = deckoverlay._props.layers.concat(scatterlayer);
+        let lrs = deckoverlay._props.layers.concat(scatterlayers);
         lrs = lrs.sort(function(a, b) {
           return a.props.zIndex - b.props.zIndex;
         });
@@ -67,8 +79,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 };
 
 
-scatterplotLayer = function(map, opts, table) {
-  //let gaDeckLayers = window.gaDeckLayers;
+scatterplotLayer = function(map, opts, table, id) {
 
   let table_names = table.schema.fields.map(obj => obj.name);
 
@@ -81,11 +92,12 @@ scatterplotLayer = function(map, opts, table) {
   }
 
   let layer = new gaDeckLayers.GeoArrowScatterplotLayer({
-    id: opts.decklayerId,
+    //id: opts.decklayerId,
+    id: id,
     data: table,
-    getPosition: table.getChild(opts.geom_column_name),
+    //getPosition: table.getChild(opts.geom_column_name),
     beforeId: opts.renderOptions.beforeId,
-    slot: opts.layerId,
+    slot: opts.decklayerId,
     zIndex: opts.renderOptions.zIndex,
 
     // render options
@@ -145,6 +157,7 @@ scatterplotLayer = function(map, opts, table) {
     },
 
     onHover: opts.tooltip === null ? null : (info, event) => {
+      console.log(event.object);
         if (info.picked === false) {
           removePopups(opts.tooltipOptions.className);
         }

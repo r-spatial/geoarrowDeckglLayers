@@ -2,20 +2,20 @@ addGeoArrowDeckglPolygonLayer = function(map, opts) {
 
   // FIXME: turn into function for re-use across layer types
   // first we generate the proper internal layer name using the slot parameter
-  opts.decklayerId = "deck-layer-group-slot:" + opts.layerId
+  opts.decklayerId = "deck-layer-group-slot:" + opts.layerId;
 
   // then, if 'beforeId' is supplied we change accordingly. see
   // https://github.com/visgl/deck.gl/tree/master/modules/mapbox/src/resolve-layer-groups.ts#L13-L20
   if (opts.renderOptions.beforeId !== null) {
-    opts.decklayerId = "deck-layer-group-before:" + opts.renderOptions.beforeId
+    opts.decklayerId = "deck-layer-group-before:" + opts.renderOptions.beforeId;
   }
 
   // FIXME: turn into function for re-use across layer types
   // do we already have a deckgl mapboxoverlay on our map?
-  deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"))
+  deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
 
   if (deckoverlay === undefined) {
-    deckoverlay = new deck.MapboxOverlay({
+    deckoverlay = new MapboxOverlay({
       id: "geoarrow-deck-layer",
       interleaved: opts.interleaved,
       layers: [],
@@ -45,13 +45,25 @@ addGeoArrowDeckglPolygonLayer = function(map, opts) {
     })
     .then(arrow_table => {
 
-      let polygonlayer = polygonLayer(map, opts, arrow_table);
+      let batchIndex = 0;
+      const polygonlayers = [];
+      let len = arrow_table.batches.length;
+      let batch = {};
+      let id = [];
+
+      for (let i = 0; i < len; i++) {
+
+        batch = arrow_table.batches[i];
+        id = `${opts.decklayerId}-${batchIndex}`;
+        polygonlayers.push(polygonLayer(map, opts, batch, id));
+
+      }
 
       // does the mapboxoverlay already have layer(s)?
       if (deckoverlay._props.layers.length ===  0) {
-        deckoverlay.setProps({ layers: [polygonlayer] })
+        deckoverlay.setProps({ layers: polygonlayers })
       } else {
-        let lrs = deckoverlay._props.layers.concat(polygonlayer);
+        let lrs = deckoverlay._props.layers.concat(polygonlayers);
         lrs = lrs.sort(function(a, b) {
           return a.props.zIndex - b.props.zIndex;
         });
@@ -60,7 +72,6 @@ addGeoArrowDeckglPolygonLayer = function(map, opts) {
 
     });
 
-
   map.on("projectiontransition", () => {
     deckoverlay._updateViewState();
   });
@@ -68,8 +79,7 @@ addGeoArrowDeckglPolygonLayer = function(map, opts) {
 };
 
 
-polygonLayer = function(map, opts, table) {
-  let gaDeckLayers = window["@geoarrow/deck"]["gl-layers"];
+polygonLayer = function(map, opts, table, id) {
 
   let table_names = table.schema.fields.map(obj => obj.name);
 
@@ -82,11 +92,12 @@ polygonLayer = function(map, opts, table) {
   }
 
   let layer = new gaDeckLayers.GeoArrowPolygonLayer({
-    id: opts.decklayerId,
+    //id: opts.decklayerId,
+    id: id,
     data: table,
-    getPolygon: table.getChild(opts.geom_column_name),
+    //getPolygon: table.getChild(opts.geom_column_name),
     beforeId: opts.renderOptions.beforeId,
-    slot: opts.layerId,
+    slot: opts.decklayerId,
     zIndex: opts.renderOptions.zIndex,
 
     // render options

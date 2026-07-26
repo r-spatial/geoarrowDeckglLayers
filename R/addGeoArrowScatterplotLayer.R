@@ -277,14 +277,30 @@ addGeoArrowScatterplotLayer = function(
     , ...
 ) {
 
+  stopifnot(requireNamespace("geoarrow", quietly = TRUE))
+
+  map$dependencies = c(
+    map$dependencies
+    , importDependencies()
+    , deckglgeoarrowModuleDependency()
+    , helpersDependency()
+  )
+
+  map = geoarrowWidget::attachParquetWasmDependencies(
+    widget = map
+  )
+
   map$dependencies = c(
     map$dependencies
     , list(
       htmltools::htmlDependency(
-        name = "deckglScatterplot"
+        name = "deckglgeoarrowScatterplot"
         , version = "0.0.1"
         , src = system.file("htmlwidgets", package = "deckglgeoarrow")
-        , script = "addGeoArrowDeckglScatterplotLayer.js"
+        , script = list(
+          src = "addGeoArrowDeckglScatterplotLayer.js"
+          # , type = "module"
+        )
       )
     )
   )
@@ -306,21 +322,9 @@ addGeoArrowScatterplotLayer = function(
     layer_id = source
   }
 
-  map$dependencies = c(
-    map$dependencies
-    , importDependencies()
-    , deckglgeoarrowDependencies()
-    , helpersDependency()
-  )
-
-  map = geoarrowWidget::attachParquetWasmDependencies(
-    widget = map
-  )
-
   if (missing(js_code)) {
     js_code = htmlwidgets::JS(
       'function(el, x, data) {
-        debugger;
         map = this.getMap();
         addGeoArrowDeckglScatterplotLayer(map, data);
       }'
