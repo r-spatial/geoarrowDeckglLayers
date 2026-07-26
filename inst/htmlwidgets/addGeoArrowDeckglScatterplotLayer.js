@@ -23,7 +23,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
       deviceProps: {
         _cacheShaders: true,
         _cachePipelines: true,
-      },
+      }
     });
     map.addControl(deckoverlay);
   }
