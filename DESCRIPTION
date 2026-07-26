@@ -36,6 +36,7 @@ Suggests:
     geos,
     mapgl,
     quarto,
+    s2,
     terra,
     tinytest,
     wk
