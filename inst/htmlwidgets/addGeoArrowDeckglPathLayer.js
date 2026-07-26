@@ -6,7 +6,7 @@ addGeoArrowDeckglPathLayer = function(map, opts) {
     opts.decklayerId = "deck-layer-group-before:" + opts.renderOptions.beforeId;
   }
 
-  deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
+  let deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
 
   if (deckoverlay === undefined) {
     deckoverlay = new MapboxOverlay({
@@ -91,7 +91,7 @@ pathLayer = function(map, opts, table, id) {
     //getPath: table.getChild(opts.geom_column_name),
     getCursor: () => "inherit",
     beforeId: opts.renderOptions.beforeId,
-    slot: opts.decklayerId,
+    slot: opts.layerId,
     zIndex: opts.renderOptions.zIndex,
 
     // render options

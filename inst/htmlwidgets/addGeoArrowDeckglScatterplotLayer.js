@@ -12,7 +12,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 
   // FIXME: turn into function for re-use across layer types
   // do we already have a deckgl mapboxoverlay on our map?
-  deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
+  let deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
 
   if (deckoverlay === undefined) {
     deckoverlay = new MapboxOverlay({
@@ -97,7 +97,7 @@ scatterplotLayer = function(map, opts, table, id) {
     data: table,
     //getPosition: table.getChild(opts.geom_column_name),
     beforeId: opts.renderOptions.beforeId,
-    slot: opts.decklayerId,
+    slot: opts.layerId,
     zIndex: opts.renderOptions.zIndex,
 
     // render options
