@@ -1,4 +1,4 @@
-addGeoArrowDeckglScatterplotLayer = function(map, opts) {
+addGeoArrowDeckglS2Layer = function(map, opts) {
 
   // FIXME: turn into function for re-use across layer types
   // first we generate the proper internal layer name using the slot parameter
@@ -46,7 +46,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
     .then(arrow_table => {
 
       let batchIndex = 0;
-      const scatterlayers = [];
+      const s2layers = [];
       let len = arrow_table.batches.length;
       let batch = {};
       let id = [];
@@ -55,15 +55,15 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 
         batch = arrow_table.batches[i];
         id = `${opts.decklayerId}-${batchIndex}`;
-        scatterlayers.push(scatterplotLayer(map, opts, batch, id));
+        s2layers.push(s2Layer(map, opts, batch, id));
 
       }
 
       // does the mapboxoverlay already have layer(s)?
       if (deckoverlay._props.layers.length ===  0) {
-        deckoverlay.setProps({ layers: scatterlayers });
+        deckoverlay.setProps({ layers: s2layers });
       } else {
-        let lrs = deckoverlay._props.layers.concat(scatterlayers);
+        let lrs = deckoverlay._props.layers.concat(s2layers);
         lrs = lrs.sort(function(a, b) {
           return a.props.zIndex - b.props.zIndex;
         });
@@ -72,6 +72,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 
     });
 
+
   map.on("projectiontransition", () => {
     deckoverlay._updateViewState();
   });
@@ -79,7 +80,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 };
 
 
-scatterplotLayer = function(map, opts, table, id) {
+s2Layer = function(map, opts, table, id) {
 
   let table_names = table.schema.fields.map(obj => obj.name);
 
@@ -91,35 +92,35 @@ scatterplotLayer = function(map, opts, table, id) {
     opts.tooltip = table_names;
   }
 
-  let layer = new gaDeckLayers.GeoArrowScatterplotLayer({
+  let layer = new gaDeckLayers.GeoArrowS2Layer({
     //id: opts.decklayerId,
     id: id,
     data: table,
-    //getPosition: table.getChild(opts.geom_column_name),
+    getS2Token: table.getChild(opts.s2_column_name),
     beforeId: opts.renderOptions.beforeId,
     slot: opts.layerId,
     zIndex: opts.renderOptions.zIndex,
 
     // render options
-    radiusUnits: opts.renderOptions.radiusUnits,
-    radiusScale: opts.renderOptions.radiusScale,
+    filled: opts.renderOptions.filled,
+    stroked: opts.renderOptions.stroked,
+    extruded: opts.renderOptions.extruded,
+    wireframe: opts.renderOptions.wireframe,
+    elevationScale: opts.renderOptions.elevationScale,
     lineWidthUnits: opts.renderOptions.lineWidthUnits,
     lineWidthScale: opts.renderOptions.lineWidthScale,
-    stroked: opts.renderOptions.stroked,
-    filled: opts.renderOptions.filled,
-    radiusMinPixels: opts.renderOptions.radiusMinPixels,
-    radiusMaxPixels: opts.renderOptions.radiusMaxPixels,
     lineWidthMinPixels: opts.renderOptions.lineWidthMinPixels,
     lineWidthMaxPixels: opts.renderOptions.lineWidthMaxPixels,
-    billboard: opts.renderOptions.billboard,
-    antialiasing: opts.renderOptions.antialiasing,
+    lineJointRounded: opts.renderOptions.lineJointRounded,
+    lineMiterLimit: opts.renderOptions.lineMiterLimit,
+    /*
+    material: opts.renderOptions.material,
+    _normalize: opts.renderOptions._normalize,
+    _windingOrder: opts.renderOptions._windingOrder,
+    //https://deck.gl/docs/developer-guide/performance#supply-attributes-directly
+    */
 
     // data accessors
-    getRadius: table_names.includes(opts.dataAccessors.getRadius) ?
-      ({ index, data }) => {
-        return attributeAccessor(index, data, opts.dataAccessors.getRadius);
-      } : opts.dataAccessors.getRadius === null ? 1 : opts.dataAccessors.getRadius,
-
     getFillColor: table_names.includes(opts.dataAccessors.getFillColor) ?
       ({ index, data }) => {
         return colorAccessor(index, data, opts.dataAccessors.getFillColor);
@@ -139,6 +140,11 @@ scatterplotLayer = function(map, opts, table, id) {
         return attributeAccessor(index, data, opts.dataAccessors.getLineWidth);
       } : opts.dataAccessors.getLineWidth === null ? 1 : opts.dataAccessors.getLineWidth,
 
+    getElevation: table_names.includes(opts.dataAccessors.getElevation) ?
+      ({ index, data }) => {
+        return attributeAccessor(index, data, opts.dataAccessors.getElevation);
+      } : opts.dataAccessors.getElevation === null ? 1 : opts.dataAccessors.getElevation,
+
     // interactivity
     pickable: opts.pickable,
 
@@ -157,7 +163,6 @@ scatterplotLayer = function(map, opts, table, id) {
     },
 
     onHover: opts.tooltip === null ? null : (info, event) => {
-      console.log(event.object);
         if (info.picked === false) {
           removePopups(opts.tooltipOptions.className);
         }

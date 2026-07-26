@@ -305,11 +305,6 @@ addGeoArrowScatterplotLayer = function(
     )
   )
 
-  # map$dependencies = c(
-  #   map$dependencies
-  #   , if (!inherits(map, "mapdeck")) deckglDependencies()
-  # )
-
   if (missing(source)) {
     map = addSource(
       map = map
