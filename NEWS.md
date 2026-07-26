@@ -1,4 +1,4 @@
-# deckglgeoarrow 0.0.2.9010 (2026-07-15)
+# deckglgeoarrow 0.0.2.9011 (2026-07-26)
 
 #### ✨ features and improvements
 
