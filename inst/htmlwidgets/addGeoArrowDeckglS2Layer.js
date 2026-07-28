@@ -53,7 +53,7 @@ addGeoArrowDeckglS2Layer = function(map, opts) {
       for (let i = 0; i < len; i++) {
 
         batch = arrow_table.batches[i];
-        id = `${opts.decklayerId}-${i}`;
+        id = `${opts.layerId}-${i}`;
         s2layers.push(s2Layer(map, opts, batch, id));
 
       }

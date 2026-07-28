@@ -47,7 +47,7 @@ addGeoArrowDeckglPathLayer = function(map, opts) {
       for (let i = 0; i < len; i++) {
 
         batch = arrow_table.batches[i];
-        id = `${opts.decklayerId}-${i}`;
+        id = `${opts.layerId}-${i}`;
         pathlayers.push(pathLayer(map, opts, batch, id));
 
       }

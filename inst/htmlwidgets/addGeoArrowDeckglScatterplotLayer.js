@@ -23,7 +23,17 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
       deviceProps: {
         _cacheShaders: true,
         _cachePipelines: true,
+      },
+      controller: true,
+
+      // FIXME: for some reason this works, but does not include an info.object
+      // and picked is 'false'. Probably that's why the onClick does not work
+      // in the layer itself.
+      onClick: (info, event) => {
+        console.log("Info:", info);
+        console.log("Event:", event);
       }
+
     });
     map.addControl(deckoverlay);
   }
@@ -53,7 +63,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
       for (let i = 0; i < len; i++) {
 
         batch = arrow_table.batches[i];
-        id = `${opts.decklayerId}-${i}`;
+        id = `${opts.layerId}-${i}`;
         scatterlayers.push(scatterplotLayer(map, opts, batch, id));
 
       }
@@ -155,8 +165,8 @@ scatterplotLayer = function(map, opts, table, id) {
         }
     },
 
-    onHover: opts.tooltip === null ? null : (info, event) => {
-      console.log(event.object);
+    onHover: (info, event) => {
+      console.log(event);
         if (info.picked === false) {
           removePopups(opts.tooltipOptions.className);
         }

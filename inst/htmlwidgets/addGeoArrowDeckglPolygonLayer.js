@@ -53,7 +53,7 @@ addGeoArrowDeckglPolygonLayer = function(map, opts) {
       for (let i = 0; i < len; i++) {
 
         batch = arrow_table.batches[i];
-        id = `${opts.decklayerId}-${i}`;
+        id = `${opts.layerId}-${i}`;
         polygonlayers.push(polygonLayer(map, opts, batch, id));
 
       }
