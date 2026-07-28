@@ -45,7 +45,6 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
     })
     .then(arrow_table => {
 
-      let batchIndex = 0;
       const scatterlayers = [];
       let len = arrow_table.batches.length;
       let batch = {};
