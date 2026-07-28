@@ -32,7 +32,15 @@ n_batches = (nrow(pts) / batch_size)
 
 splt = rep(0:(n_batches - 1), each = batch_size)
 
-batches = split(pts, splt)
+batches = collapse::rsplit(pts, splt)
+
+# bench::mark(
+#   batches = s <- split(pts, splt)
+#   , bbatches = b <- by(pts, splt, identity)
+#   , rbatches = r <- collapse::rsplit(pts, splt)
+#   , iterations = 1
+#   , check = FALSE
+# )
 
 # Create an array stream
 data_stream = nanoarrow::basic_array_stream(
