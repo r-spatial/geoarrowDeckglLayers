@@ -1,5 +1,13 @@
 addGeoArrowDeckglPathLayer = function(map, opts) {
 
+  // handle hex highlightColor - only if autoHighlight requested.
+  if (opts.renderOptions.autoHighlight &&
+    isHexColor(opts.renderOptions.highlightColor)) {
+      opts.renderOptions.highlightColor = hexToRGBABitwise(
+        opts.renderOptions.highlightColor
+      );
+    }
+
   opts.decklayerId = "deck-layer-group-slot:" + opts.layerId;
 
   if (opts.renderOptions.beforeId !== null) {
@@ -9,7 +17,7 @@ addGeoArrowDeckglPathLayer = function(map, opts) {
   let deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
 
   if (deckoverlay === undefined) {
-    deckoverlay = new MapboxOverlay({
+    deckoverlay = new deckglgeoarrow.MapboxOverlay({
       id: "geoarrow-deck-layer",
       interleaved: opts.interleaved,
       layers: [],
@@ -83,7 +91,7 @@ pathLayer = function(map, opts, table, id) {
     opts.tooltip = table_names;
   }
 
-  let layer = new gaDeckLayers.GeoArrowPathLayer({
+  let layer = new deckglgeoarrow.gaDeckLayers.GeoArrowPathLayer({
     //id: opts.decklayerId,
     id: id,
     data: table,
@@ -102,6 +110,8 @@ pathLayer = function(map, opts, table, id) {
     jointRounded: opts.renderOptions.jointRounded,
     billboard: opts.renderOptions.billboard,
     miterLimit: opts.renderOptions.miterLimit,
+    autoHighlight: opts.renderOptions.autoHighlight,
+    highlightColor: opts.renderOptions.highlightColor,
     // _pathType: opts.renderOptions._pathType,
 
     // data accessors

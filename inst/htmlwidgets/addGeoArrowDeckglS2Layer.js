@@ -1,5 +1,13 @@
 addGeoArrowDeckglS2Layer = function(map, opts) {
 
+  // handle hex highlightColor - only if autoHighlight requested.
+  if (opts.renderOptions.autoHighlight &&
+    isHexColor(opts.renderOptions.highlightColor)) {
+      opts.renderOptions.highlightColor = hexToRGBABitwise(
+        opts.renderOptions.highlightColor
+      );
+    }
+
   // FIXME: turn into function for re-use across layer types
   // first we generate the proper internal layer name using the slot parameter
   opts.decklayerId = "deck-layer-group-slot:" + opts.layerId;
@@ -15,7 +23,7 @@ addGeoArrowDeckglS2Layer = function(map, opts) {
   let deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
 
   if (deckoverlay === undefined) {
-    deckoverlay = new MapboxOverlay({
+    deckoverlay = new deckglgeoarrow.MapboxOverlay({
       id: "geoarrow-deck-layer",
       interleaved: opts.interleaved,
       layers: [],
@@ -91,7 +99,7 @@ s2Layer = function(map, opts, table, id) {
     opts.tooltip = table_names;
   }
 
-  let layer = new gaDeckLayers.GeoArrowS2Layer({
+  let layer = new deckglgeoarrow.gaDeckLayers.GeoArrowS2Layer({
     //id: opts.decklayerId,
     id: id,
     data: table,
@@ -112,6 +120,8 @@ s2Layer = function(map, opts, table, id) {
     lineWidthMaxPixels: opts.renderOptions.lineWidthMaxPixels,
     lineJointRounded: opts.renderOptions.lineJointRounded,
     lineMiterLimit: opts.renderOptions.lineMiterLimit,
+    autoHighlight: opts.renderOptions.autoHighlight,
+    highlightColor: opts.renderOptions.highlightColor,
     /*
     material: opts.renderOptions.material,
     _normalize: opts.renderOptions._normalize,

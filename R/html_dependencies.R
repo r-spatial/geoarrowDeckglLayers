@@ -56,8 +56,8 @@ deckglgeoarrowDependencies = function() {
         fldr
       )
       , script = list(
-        src = "dga.js"
-        , type = "module"
+        src = "bundle.js"
+        # , type = "module"
       )
       # , script = "dist.umd.min.js"
     )

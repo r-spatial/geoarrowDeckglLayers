@@ -165,8 +165,9 @@ addGeoArrowS2Layer = function(
 
   map$dependencies = c(
     map$dependencies
-    , importDependencies()
-    , deckglgeoarrowModuleDependency()
+    # , importDependencies()
+    # , deckglgeoarrowModuleDependency()
+    , deckglgeoarrowDependencies()
     , helpersDependency()
   )
 
@@ -230,7 +231,11 @@ addGeoArrowS2Layer = function(
     )
     , map_class = map_class
     , interleaved = TRUE
-    , pickable = any(pickable(popup), pickable(tooltip))
+    , pickable = any(
+      pickable(popup)
+      , pickable(tooltip)
+      , render_options[["autoHighlight"]]
+    )
   )
 
   dot_lst = list(...)

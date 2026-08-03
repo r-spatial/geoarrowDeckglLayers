@@ -1,5 +1,13 @@
 addGeoArrowDeckglScatterplotLayer = function(map, opts) {
 
+  // handle hex highlightColor - only if autoHighlight requested.
+  if (opts.renderOptions.autoHighlight &&
+    isHexColor(opts.renderOptions.highlightColor)) {
+      opts.renderOptions.highlightColor = hexToRGBABitwise(
+        opts.renderOptions.highlightColor
+      );
+    }
+
   // FIXME: turn into function for re-use across layer types
   // first we generate the proper internal layer name using the slot parameter
   opts.decklayerId = "deck-layer-group-slot:" + opts.layerId;
@@ -15,7 +23,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
   let deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
 
   if (deckoverlay === undefined) {
-    deckoverlay = new MapboxOverlay({
+    deckoverlay = new deckglgeoarrow.MapboxOverlay({
       id: "geoarrow-deck-layer",
       interleaved: opts.interleaved,
       layers: [],
@@ -24,15 +32,6 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
         _cacheShaders: true,
         _cachePipelines: true,
       },
-      controller: true,
-
-      // FIXME: for some reason this works, but does not include an info.object
-      // and picked is 'false'. Probably that's why the onClick does not work
-      // in the layer itself.
-      onClick: (info, event) => {
-        console.log("Info:", info);
-        console.log("Event:", event);
-      }
 
     });
     map.addControl(deckoverlay);
@@ -100,7 +99,7 @@ scatterplotLayer = function(map, opts, table, id) {
     opts.tooltip = table_names;
   }
 
-  let layer = new gaDeckLayers.GeoArrowScatterplotLayer({
+  let layer = new deckglgeoarrow.gaDeckLayers.GeoArrowScatterplotLayer({
     //id: opts.decklayerId,
     id: id,
     data: table,
@@ -122,6 +121,8 @@ scatterplotLayer = function(map, opts, table, id) {
     lineWidthMaxPixels: opts.renderOptions.lineWidthMaxPixels,
     billboard: opts.renderOptions.billboard,
     antialiasing: opts.renderOptions.antialiasing,
+    autoHighlight: opts.renderOptions.autoHighlight,
+    highlightColor: opts.renderOptions.highlightColor,
 
     // data accessors
     getRadius: table_names.includes(opts.dataAccessors.getRadius) ?
@@ -166,7 +167,6 @@ scatterplotLayer = function(map, opts, table, id) {
     },
 
     onHover: (info, event) => {
-      console.log(event);
         if (info.picked === false) {
           removePopups(opts.tooltipOptions.className);
         }
