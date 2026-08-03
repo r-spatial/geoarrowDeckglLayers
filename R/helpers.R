@@ -58,6 +58,8 @@
 #'
 #' * beforeId = NULL
 #' * zIndex = 1
+#' * autoHighlight = FALSE - requires `pickable` to be TRUE
+#' * highlightColor = c(0, 0, 128, 128) - only applicable if `autoHighlight` is TRUE
 #'
 #' `zIndex` can be used to set layers order if multiple layers are added to a map.
 #' Higher values will be plotted on top of lower values.
@@ -115,6 +117,8 @@ renderOptions = function(...) {
     , miterLimit = 4
     , beforeId = NULL
     , zIndex = 1
+    , autoHighlight = FALSE
+    , highlightColor = c(0, 0, 128, 128)
   )
 
   dot_lst = list(...)

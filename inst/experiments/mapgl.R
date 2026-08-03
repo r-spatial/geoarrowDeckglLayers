@@ -58,6 +58,7 @@ m = m |>
     , render_options = renderOptions(
       zIndex = 1
       , beforeId = "water"
+      , autoHighlight = TRUE
     )
     , data_accessors = dataAccessors(
       getRadius = "radius"
@@ -85,6 +86,7 @@ m = m |>
       extruded = FALSE
       , stroked = FALSE
       , zIndex = 2
+      , autoHighlight = TRUE
     )
     , data_accessors = dataAccessors(
       getFillColor = "fillColor"
@@ -104,6 +106,7 @@ m |>
       , widthScale = 1000
       , widthMaxPixels = 30
       , zIndex = 3
+      , autoHighlight = TRUE
     )
     , data_accessors = dataAccessors(
       getWidth = "Strahler"

@@ -72,6 +72,8 @@ Currently, the following options are automatically set to the following defaults
 \itemize{
 \item beforeId = NULL
 \item zIndex = 1
+\item autoHighlight = FALSE - requires \code{pickable} to be TRUE
+\item highlightColor = c(0, 0, 128, 128) - only applicable if \code{autoHighlight} is TRUE
 }
 
 \code{zIndex} can be used to set layers order if multiple layers are added to a map.
