@@ -80,6 +80,9 @@
 #'       getFillColor = "#74aa2380"
 #'       , getLineColor = "#4523bb"
 #'       , getLineWidth = 2
+#'     ),
+#'     render_options = renderOptions(
+#'       autoHighlight = TRUE
 #'     )
 #'   ) |>
 #'   set_view(c(0, 0), 2) |>
