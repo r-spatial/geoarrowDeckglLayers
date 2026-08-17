@@ -71,6 +71,9 @@ m = m |>
       anchor = "bottom-right"
     )
     , tooltip = FALSE
+    , parameters = list(
+      depthTest = TRUE
+    )
   ) |>
   set_view(c(100, 30), 2) |>
   add_globe_control() |>

@@ -166,7 +166,7 @@ scatterplotLayer = function(map, opts, table, id) {
         }
     },
 
-    onHover: (info, event) => {
+    onHover: opts.tooltip === null ? null : (info, event) => {
         if (info.picked === false) {
           removePopups(opts.tooltipOptions.className);
         }
