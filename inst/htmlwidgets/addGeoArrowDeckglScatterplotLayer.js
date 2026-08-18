@@ -23,7 +23,7 @@ addGeoArrowDeckglScatterplotLayer = function(map, opts) {
   let deckoverlay = map._controls.find((el) => el.hasOwnProperty("_deck"));
 
   if (deckoverlay === undefined) {
-    deckoverlay = new deckglgeoarrow.MapboxOverlay({
+    deckoverlay = new rdeckglgeoarrow.MapboxOverlay({
       id: "geoarrow-deck-layer",
       interleaved: opts.interleaved,
       layers: [],
@@ -99,7 +99,7 @@ scatterplotLayer = function(map, opts, table, id) {
     opts.tooltip = table_names;
   }
 
-  let layer = new deckglgeoarrow.gaDeckLayers.GeoArrowScatterplotLayer({
+  let layer = new rdeckglgeoarrow.gaDeckLayers.GeoArrowScatterplotLayer({
     //id: opts.decklayerId,
     id: id,
     data: table,

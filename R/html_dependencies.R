@@ -45,18 +45,18 @@ arrowDependencies = function() {
 }
 
 ## deck.gl-geoarrow as browser bundle ==========================================
-deckglgeoarrowDependencies = function() {
+rdeckglgeoarrowDependencies = function() {
   fldr = system.file("htmlwidgets/lib/deckgl-geoarrow", package = "deckglgeoarrow")
   list(
     htmltools::htmlDependency(
-      "deck.gl-geoarrow"
+      "rdeckglgeoarrow"
       , readLines(file.path(fldr, "version.txt"))
       , src = c(
         # href = "https://cdn.jsdelivr.net/npm/@geoarrow/deck.gl-layers@0.3.0/dist"
         fldr
       )
       , script = list(
-        src = "bundle.js"
+        src = "rdeckglgeoarrow.min.js"
         # , type = "module"
       )
       # , script = "dist.umd.min.js"

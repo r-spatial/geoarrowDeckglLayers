@@ -220,7 +220,7 @@ addGeoArrowPathLayer = function(
     map$dependencies
     # , importDependencies()
     # , deckglgeoarrowModuleDependency()
-    , deckglgeoarrowDependencies()
+    , rdeckglgeoarrowDependencies()
     , helpersDependency()
   )
 

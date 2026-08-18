@@ -170,7 +170,7 @@ addGeoArrowS2Layer = function(
     map$dependencies
     # , importDependencies()
     # , deckglgeoarrowModuleDependency()
-    , deckglgeoarrowDependencies()
+    , rdeckglgeoarrowDependencies()
     , helpersDependency()
   )
 
